@@ -3,140 +3,246 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7Timer Weather Dashboard | พยากรณ์อากาศ</title>
-  <meta name="description" content="แสดงข้อมูลพยากรณ์อากาศจาก 7timer.info พร้อมกราฟอุณหภูมิและความชื้น" />
+  <title>IRIS Weather — พยากรณ์อากาศอัจฉริยะ</title>
+  <meta name="description" content="ระบบพยากรณ์อากาศอัจฉริยะจาก 7timer.info พร้อมกราฟอุณหภูมิและความชื้น แบบ Real-time" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+
+  <!-- Animated Background -->
+  <div class="bg-mesh">
+    <div class="mesh-orb mesh-1"></div>
+    <div class="mesh-orb mesh-2"></div>
+    <div class="mesh-orb mesh-3"></div>
+    <div class="mesh-grid"></div>
   </div>
 
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">
-        <span class="logo-icon">🌤</span>
-        <span class="logo-text">7Timer <span class="accent">Weather</span></span>
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="15" stroke="url(#g1)" stroke-width="2"/>
+            <path d="M8 20 Q12 10 16 18 Q20 26 24 16" stroke="url(#g2)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <circle cx="10" cy="12" r="2" fill="#60a5fa" opacity="0.8"/>
+            <circle cx="22" cy="12" r="1.5" fill="#a78bfa" opacity="0.8"/>
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32">
+                <stop offset="0%" stop-color="#3b82f6"/>
+                <stop offset="100%" stop-color="#8b5cf6"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="32" y2="0">
+                <stop offset="0%" stop-color="#60a5fa"/>
+                <stop offset="100%" stop-color="#f472b6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">IRIS</span>
+          <span class="brand-sub">Weather AI</span>
+        </div>
       </div>
-      <div class="header-badge">Live Forecast</div>
-    </div>
-  </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1 class="hero-title">พยากรณ์อากาศ<br /><span class="gradient-text">กรุงเทพมหานคร</span></h1>
-      <p class="hero-sub">ข้อมูลจาก <strong>7timer.info</strong> · อัปเดตทุก 3 ชั่วโมง</p>
-
-      <div class="location-bar">
-        <div class="location-field">
+      <!-- Location Input -->
+      <div class="location-section">
+        <div class="section-label">📍 พิกัดตำแหน่ง</div>
+        <div class="input-group">
           <label for="lat-input">Latitude</label>
           <input id="lat-input" type="number" step="0.0001" value="13.7563" placeholder="13.7563" />
         </div>
-        <div class="location-field">
+        <div class="input-group">
           <label for="lon-input">Longitude</label>
           <input id="lon-input" type="number" step="0.0001" value="100.5018" placeholder="100.5018" />
         </div>
         <button id="fetch-btn" class="btn-fetch" onclick="fetchWeather()">
-          <span class="btn-icon">🔍</span> ดึงข้อมูล
+          <span class="btn-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </span>
+          ดึงข้อมูลพยากรณ์
         </button>
       </div>
-    </section>
 
-    <!-- Status -->
-    <div id="status-bar" class="status-bar hidden">
-      <div class="spinner"></div>
-      <span id="status-text">กำลังโหลดข้อมูล...</span>
-    </div>
+      <!-- Navigation -->
+      <nav class="sidebar-nav" id="sidebar-nav" style="display:none">
+        <div class="section-label">📊 มุมมอง</div>
+        <button class="nav-item active" id="nav-chart" onclick="showTab('chart')">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </span>
+          <span>กราฟ & สถิติ</span>
+        </button>
+        <button class="nav-item" id="nav-table" onclick="showTab('table')">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>
+            </svg>
+          </span>
+          <span>ตารางข้อมูล</span>
+        </button>
+        <button class="nav-item" id="nav-raw" onclick="showTab('raw')">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </span>
+          <span>ข้อมูลดิบ JSON</span>
+        </button>
+      </nav>
 
-    <!-- Tab Navigation -->
-    <nav class="tab-nav" id="tab-nav" style="display:none">
-      <button class="tab-btn active" id="tab-raw" onclick="showTab('raw')">
-        📄 ข้อมูลดิบ (JSON)
-      </button>
-      <button class="tab-btn" id="tab-table" onclick="showTab('table')">
-        📋 ตาราง (Timepoint + อุณหภูมิ/ความชื้น)
-      </button>
-      <button class="tab-btn" id="tab-chart" onclick="showTab('chart')">
-        📊 กราฟ
-      </button>
-    </nav>
+      <!-- Status -->
+      <div id="status-bar" class="status-sidebar hidden">
+        <div class="spinner" id="status-spinner"></div>
+        <span id="status-text">กำลังโหลด...</span>
+      </div>
 
-    <!-- Tab: Raw JSON -->
-    <section id="panel-raw" class="panel hidden">
-      <div class="panel-header">
-        <h2 class="panel-title">📄 ข้อมูลดิบจาก API</h2>
-        <div class="meta-chips" id="raw-meta"></div>
+      <div class="sidebar-footer">
+        <a href="http://www.7timer.info" target="_blank" rel="noopener">7timer.info</a>
+        <span>· อัปเดตทุก 3 ชม.</span>
       </div>
-      <div class="raw-box">
-        <button class="copy-btn" onclick="copyRaw()" title="คัดลอก JSON">📋 Copy</button>
-        <pre id="raw-output" class="raw-pre"></pre>
-      </div>
-    </section>
+    </aside>
 
-    <!-- Tab: Table -->
-    <section id="panel-table" class="panel hidden">
-      <div class="panel-header">
-        <h2 class="panel-title">📋 Timepoint · อุณหภูมิ · ความชื้น</h2>
-        <p class="panel-desc">แสดงเฉพาะข้อมูล timepoint, อุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%)</p>
-      </div>
-      <div class="table-wrap">
-        <table class="weather-table" id="weather-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Timepoint (h)</th>
-              <th>วันที่ / เวลา</th>
-              <th>🌡 อุณหภูมิ (°C)</th>
-              <th>💧 ความชื้น (%)</th>
-              <th>สภาพ</th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-    </section>
+    <!-- ── Main Content ── -->
+    <main class="main-content">
 
-    <!-- Tab: Chart -->
-    <section id="panel-chart" class="panel hidden">
-      <div class="panel-header">
-        <h2 class="panel-title">📊 กราฟอุณหภูมิ &amp; ความชื้น</h2>
-        <p class="panel-desc">แนวโน้มอุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%) ตลอด 8 วัน</p>
-      </div>
-      <div class="chart-grid">
-        <div class="chart-card chart-card-main">
-          <div class="chart-card-title">🌡 อุณหภูมิ + 💧 ความชื้น</div>
-          <div class="chart-wrap">
-            <canvas id="combo-chart"></canvas>
+      <!-- Top bar (mobile) -->
+      <header class="topbar">
+        <div class="topbar-brand">
+          <span class="topbar-name">IRIS Weather</span>
+        </div>
+        <div class="topbar-badge" id="topbar-badge">Live Forecast</div>
+      </header>
+
+      <!-- Hero Weather Card (shows after fetch) -->
+      <section class="hero-section" id="hero-section">
+        <div class="hero-card" id="hero-card">
+          <div class="hero-left">
+            <div class="hero-location" id="hero-location">กรุงเทพมหานคร</div>
+            <div class="hero-temp" id="hero-temp">--°</div>
+            <div class="hero-cond" id="hero-cond">กำลังโหลด...</div>
+            <div class="hero-meta" id="hero-meta"></div>
+          </div>
+          <div class="hero-right">
+            <div class="weather-icon-large" id="weather-icon-large">🌤</div>
+            <div class="hero-stats-mini" id="hero-stats-mini"></div>
           </div>
         </div>
-        <div class="chart-row-bottom">
-          <div class="chart-card">
-            <div class="chart-card-title">🌡 อุณหภูมิ (°C)</div>
-            <div class="chart-wrap chart-wrap-sm">
-              <canvas id="temp-chart"></canvas>
-            </div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">💧 ความชื้น (%)</div>
-            <div class="chart-wrap chart-wrap-sm">
-              <canvas id="humidity-chart"></canvas>
-            </div>
+
+        <!-- Forecast Strip -->
+        <div class="forecast-strip" id="forecast-strip"></div>
+      </section>
+
+      <!-- Content Area -->
+      <div class="content-area">
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🌍</div>
+          <h2>ยินดีต้อนรับสู่ IRIS Weather</h2>
+          <p>กรอกพิกัดและกด "ดึงข้อมูลพยากรณ์" เพื่อเริ่มต้น</p>
+          <div class="empty-features">
+            <div class="feature-chip">📊 กราฟอุณหภูมิ 8 วัน</div>
+            <div class="feature-chip">💧 ความชื้นสัมพัทธ์</div>
+            <div class="feature-chip">⚡ Real-time Data</div>
           </div>
         </div>
-      </div>
-      <div class="stat-cards" id="stat-cards"></div>
-    </section>
-  </main>
 
-  <footer class="footer">
-    <p>ข้อมูลพยากรณ์อากาศโดย <a href="http://www.7timer.info" target="_blank" rel="noopener">7timer.info</a> · สร้างด้วย ❤️ + Chart.js</p>
-  </footer>
+        <!-- Panel: Chart -->
+        <section id="panel-chart" class="panel hidden">
+          <div class="panel-header">
+            <h2 class="panel-title">กราฟอุณหภูมิ & ความชื้น</h2>
+            <p class="panel-desc">แนวโน้มตลอด 8 วัน — อุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%)</p>
+          </div>
+
+          <!-- Stat Cards -->
+          <div class="stat-grid" id="stat-cards"></div>
+
+          <!-- Main Combo Chart -->
+          <div class="chart-card chart-card-xl">
+            <div class="chart-card-header">
+              <span class="chart-card-title">🌡 อุณหภูมิ + 💧 ความชื้น (รวม)</span>
+              <span class="chart-badge">8 วัน</span>
+            </div>
+            <div class="chart-wrap" style="height:340px">
+              <canvas id="combo-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Sub Charts -->
+          <div class="chart-duo">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title">🌡 อุณหภูมิ (°C)</span>
+              </div>
+              <div class="chart-wrap" style="height:220px">
+                <canvas id="temp-chart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title">💧 ความชื้น (%)</span>
+              </div>
+              <div class="chart-wrap" style="height:220px">
+                <canvas id="humidity-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Table -->
+        <section id="panel-table" class="panel hidden">
+          <div class="panel-header">
+            <h2 class="panel-title">ตารางพยากรณ์อากาศ</h2>
+            <p class="panel-desc">Timepoint · อุณหภูมิ (°C) · ความชื้น (%) · สภาพอากาศ</p>
+          </div>
+          <div class="table-wrap">
+            <table class="weather-table" id="weather-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Timepoint</th>
+                  <th>วันที่ / เวลา</th>
+                  <th>🌡 อุณหภูมิ</th>
+                  <th>💧 ความชื้น</th>
+                  <th>สภาพอากาศ</th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Panel: Raw JSON -->
+        <section id="panel-raw" class="panel hidden">
+          <div class="panel-header">
+            <h2 class="panel-title">ข้อมูลดิบจาก API</h2>
+            <div class="meta-chips" id="raw-meta"></div>
+          </div>
+          <div class="raw-box">
+            <button class="copy-btn" onclick="copyRaw()" id="copy-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copy JSON
+            </button>
+            <pre id="raw-output" class="raw-pre"></pre>
+          </div>
+        </section>
+
+      </div><!-- /content-area -->
+    </main>
+  </div><!-- /app-shell -->
 
   <script src="app.js"></script>
 </body>
