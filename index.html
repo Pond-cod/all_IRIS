@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7Timer Weather Dashboard | พยากรณ์อากาศ</title>
+  <meta name="description" content="แสดงข้อมูลพยากรณ์อากาศจาก 7timer.info พร้อมกราฟอุณหภูมิและความชื้น" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌤</span>
+        <span class="logo-text">7Timer <span class="accent">Weather</span></span>
+      </div>
+      <div class="header-badge">Live Forecast</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 class="hero-title">พยากรณ์อากาศ<br /><span class="gradient-text">กรุงเทพมหานคร</span></h1>
+      <p class="hero-sub">ข้อมูลจาก <strong>7timer.info</strong> · อัปเดตทุก 3 ชั่วโมง</p>
+
+      <div class="location-bar">
+        <div class="location-field">
+          <label for="lat-input">Latitude</label>
+          <input id="lat-input" type="number" step="0.0001" value="13.7563" placeholder="13.7563" />
+        </div>
+        <div class="location-field">
+          <label for="lon-input">Longitude</label>
+          <input id="lon-input" type="number" step="0.0001" value="100.5018" placeholder="100.5018" />
+        </div>
+        <button id="fetch-btn" class="btn-fetch" onclick="fetchWeather()">
+          <span class="btn-icon">🔍</span> ดึงข้อมูล
+        </button>
+      </div>
+    </section>
+
+    <!-- Status -->
+    <div id="status-bar" class="status-bar hidden">
+      <div class="spinner"></div>
+      <span id="status-text">กำลังโหลดข้อมูล...</span>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tab-nav" style="display:none">
+      <button class="tab-btn active" id="tab-raw" onclick="showTab('raw')">
+        📄 ข้อมูลดิบ (JSON)
+      </button>
+      <button class="tab-btn" id="tab-table" onclick="showTab('table')">
+        📋 ตาราง (Timepoint + อุณหภูมิ/ความชื้น)
+      </button>
+      <button class="tab-btn" id="tab-chart" onclick="showTab('chart')">
+        📊 กราฟ
+      </button>
+    </nav>
+
+    <!-- Tab: Raw JSON -->
+    <section id="panel-raw" class="panel hidden">
+      <div class="panel-header">
+        <h2 class="panel-title">📄 ข้อมูลดิบจาก API</h2>
+        <div class="meta-chips" id="raw-meta"></div>
+      </div>
+      <div class="raw-box">
+        <button class="copy-btn" onclick="copyRaw()" title="คัดลอก JSON">📋 Copy</button>
+        <pre id="raw-output" class="raw-pre"></pre>
+      </div>
+    </section>
+
+    <!-- Tab: Table -->
+    <section id="panel-table" class="panel hidden">
+      <div class="panel-header">
+        <h2 class="panel-title">📋 Timepoint · อุณหภูมิ · ความชื้น</h2>
+        <p class="panel-desc">แสดงเฉพาะข้อมูล timepoint, อุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%)</p>
+      </div>
+      <div class="table-wrap">
+        <table class="weather-table" id="weather-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Timepoint (h)</th>
+              <th>วันที่ / เวลา</th>
+              <th>🌡 อุณหภูมิ (°C)</th>
+              <th>💧 ความชื้น (%)</th>
+              <th>สภาพ</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab: Chart -->
+    <section id="panel-chart" class="panel hidden">
+      <div class="panel-header">
+        <h2 class="panel-title">📊 กราฟอุณหภูมิ &amp; ความชื้น</h2>
+        <p class="panel-desc">แนวโน้มอุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%) ตลอด 8 วัน</p>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card chart-card-main">
+          <div class="chart-card-title">🌡 อุณหภูมิ + 💧 ความชื้น</div>
+          <div class="chart-wrap">
+            <canvas id="combo-chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-row-bottom">
+          <div class="chart-card">
+            <div class="chart-card-title">🌡 อุณหภูมิ (°C)</div>
+            <div class="chart-wrap chart-wrap-sm">
+              <canvas id="temp-chart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">💧 ความชื้น (%)</div>
+            <div class="chart-wrap chart-wrap-sm">
+              <canvas id="humidity-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-cards" id="stat-cards"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>ข้อมูลพยากรณ์อากาศโดย <a href="http://www.7timer.info" target="_blank" rel="noopener">7timer.info</a> · สร้างด้วย ❤️ + Chart.js</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
