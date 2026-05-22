@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สวัสดีวันศุกร์ - Happy Friday! 🌟</title>
+    <meta name="description" content="ส่งความสุขและความสดใสในวันศุกร์ด้วยน้องแมวสุดน่ารักและคำอวยพรดีๆ">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #4a90e2;
+            --light-blue: #e3f2fd;
+            --accent-pink: #ffb7b2;
+            --accent-yellow: #ffdac1;
+            --bg-gradient: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-border: rgba(255, 255, 255, 0.4);
+            --text-color: #2c3e50;
+            --text-muted: #57606f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Mitr', 'Prompt', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating background circles */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 20s infinite linear;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0.1; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 520px;
+            z-index: 10;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(74, 144, 226, 0.2);
+        }
+
+        /* Rainbow header border */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff9aa2, #ffb7b2, #ffdac1, #e2f0cb, #b5ead7, #c7ceea);
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2e64a2;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .sub-title {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        /* Avatar styling with animations */
+        .avatar-container {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 25px auto;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .avatar-container:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        /* The waving animation on hover and loop */
+        .avatar-container:hover .avatar-img {
+            animation: wave 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(6deg) scale(1.02); }
+            100% { transform: rotate(-6deg) scale(1.02); }
+        }
+
+        .greeting-bubble {
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 1.2rem;
+            font-weight: 500;
+            position: relative;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        /* Speech bubble arrow */
+        .greeting-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: #fff transparent;
+            display: block;
+            width: 0;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* Button design */
+        .btn-bless {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-family: 'Mitr', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-bless:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+        }
+
+        .btn-bless:active {
+            transform: translateY(1px);
+        }
+
+        /* Blessing card (hidden initially, reveals with animation) */
+        .blessing-box {
+            margin-top: 25px;
+            padding: 0;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            border: 1px dashed rgba(74, 144, 226, 0.3);
+        }
+
+        .blessing-box.show {
+            max-height: 200px;
+            opacity: 1;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .blessing-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #34495e;
+            font-weight: 400;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            z-index: 1000;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Music control */
+        .music-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--card-border);
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            z-index: 20;
+        }
+
+        .music-control:hover {
+            background: #fff;
+            transform: scale(1.1);
+        }
+
+        .music-control svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-color);
+        }
+
+        /* Calendar display */
+        .date-badge {
+            display: inline-block;
+            background: rgba(74, 144, 226, 0.1);
+            color: #2e64a2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* Interactive hint */
+        .hint-text {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-top: 15px;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background bubbles -->
+    <div id="bubbles-container"></div>
+
+    <!-- Music Control (Mute/Unmute synth) -->
+    <button id="musicToggleBtn" class="music-control" aria-label="Toggle Sound" onclick="toggleMute()">
+        <svg id="musicIcon" viewBox="0 0 24 24">
+            <!-- Muted Icon initially -->
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-9 5.77H1v6h4l5 5V4L5 9z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="card">
+            <h1 class="header-title" id="greetingHeader">สวัสดีวันศุกร์ 💙</h1>
+            <p class="sub-title">Happy Friday - ขอให้เป็นวันที่แสนสดใส</p>
+
+            <div class="date-badge" id="dateBadge">วันศุกร์ที่ ...</div>
+
+            <!-- Interactive Waving Avatar -->
+            <div class="avatar-container" onclick="triggerMeowSound()" id="avatarBox">
+                <img src="cute_cat_waving.png" alt="Cute Waving Cat" class="avatar-img" id="catImg">
+            </div>
+
+            <div>
+                <div class="greeting-bubble" id="speechBubble">
+                    เหมียว! ยินดีที่ได้พบกันนะคุณมนุษย์~ 🐾
+                </div>
+            </div>
+
+            <div>
+                <button class="btn-bless" id="blessBtn" onclick="showBlessing()">
+                    <span>รับคำอวยพรวันศุกร์ ✨</span>
+                </button>
+            </div>
+
+            <!-- Blessing card -->
+            <div class="blessing-box" id="blessingBox">
+                <p class="blessing-text" id="blessingText">
+                    "ขอให้วันศุกร์นี้เป็นวันแห่งความสุข รอยยิ้ม และเสียงหัวเราะ เติมพลังกายใจให้เต็มเปี่ยม พร้อมต้อนรับวันหยุดสุดสัปดาห์อย่างเบิกบานนะเหมียว! 🌟"
+                </p>
+            </div>
+
+            <p class="hint-text">💡 ลองจิ้มน้องแมวเพื่อฟังเสียงคีย์บอร์ดวิเศษ หรือกดปุ่มรับพรดูสิ!</p>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic date in Thai
+        function setThaiDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('th-TH', options);
+            document.getElementById('dateBadge').innerText = dateStr;
+        }
+
+        // Web Audio API Synth for interactive sound effects (cute retro chimes)
+        let isMuted = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const musicIcon = document.getElementById('musicIcon');
+            if (isMuted) {
+                // Mute icon path
+                musicIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-9 5.77H1v6h4l5 5V4L5 9z"/>';
+            } else {
+                // Unmute/Playing icon path
+                musicIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+                // Play a brief startup note
+                playTone(523.25, 'sine', 0.15, 0.1); // C5
+                setTimeout(() => playTone(659.25, 'sine', 0.15, 0.1), 100); // E5
+                setTimeout(() => playTone(783.99, 'sine', 0.15, 0.15), 200); // G5
+            }
+        }
+
+        function playTone(freq, type, duration, volume) {
+            if (isMuted) return;
+            
+            // Resume context if suspended (browser security)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+            // Exponential decay
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // Trigger interactive sound of avatar click
+        function triggerMeowSound() {
+            // Play a cheerful high pitch "meow-like" chime arpeggio
+            playTone(880, 'triangle', 0.12, 0.12); // A5
+            setTimeout(() => playTone(1320, 'triangle', 0.15, 0.12), 80); // E6
+            
+            // Add a little dynamic bounce to avatar image
+            const img = document.getElementById('catImg');
+            img.style.transform = 'scale(0.9) rotate(-10deg)';
+            setTimeout(() => {
+                img.style.transform = 'scale(1.1) rotate(10deg)';
+            }, 100);
+            setTimeout(() => {
+                img.style.transform = '';
+            }, 250);
+
+            // Change speech bubble text temporarily
+            const bubble = document.getElementById('speechBubble');
+            const originalText = bubble.innerText;
+            
+            const meowGreetings = [
+                "รักนะนุด! ขอให้วันนี้มีแต่เรื่องดีๆ นะเหมียว! 😽",
+                "อย่าลืมหาของอร่อยๆ ทานน้าาา! 🍰",
+                "มีความสุขมากๆ นะเจ้านาย! 💕",
+                "วันศุกร์แล้ว! เย้ๆ จะได้นอนกลิ้งทั้งวัน! 🛌",
+                "จิ้มแก้มแมวแล้ว ห้ามเครียดเด็ดขาดเลยนะ! 😾✨"
+            ];
+            const randomMeow = meowGreetings[Math.floor(Math.random() * meowGreetings.length)];
+            bubble.innerText = randomMeow;
+
+            // Animate bubble
+            bubble.style.animation = 'none';
+            bubble.offsetHeight; // Trigger reflow
+            bubble.style.animation = 'bounce 2s infinite ease-in-out';
+        }
+
+        // Blessings List
+        const blessings = [
+            "ขอให้วันศุกร์นี้มีแต่เรื่องดีๆ เข้ามา มีรอยยิ้มประดับใบหน้าตลอดทั้งวัน ทำงานอย่างราบรื่น สบายใจหายห่วงนะเหมียว! 🌟",
+            "เย้! วันสุดท้ายของสัปดาห์การทำงานแล้ว ขอให้พลังงานบวกอยู่รอบตัวคุณ เคลียร์งานได้เสร็จไว ได้กลับไปพักผ่อนเต็มอิ่มนะเหมียว! 🎉",
+            "ขอให้หัวใจของคุณเบิกบานเหมือนดอกไม้แรกแย้ม มีสุขภาพกายใจที่แข็งแรง ได้กินของอร่อยที่ชอบในวันศุกร์แสนหวานนี้นะเหมียว! 🍰",
+            "ขอให้อุปสรรคทุกอย่างคลี่คลาย มีแต่ความราบรื่นโชคดี มีกัลยาณมิตรที่ดีรอบข้าง และมีเสียงหัวเราะดังลั่นตลอดวันศุกร์นี้นะเหมียว! 💖",
+            "วันศุกร์แล้ว! ขอให้ความเหนื่อยล้าทั้งหมดของสัปดาห์นี้ปลิวหายไปกับสายลม แล้วแทนที่ด้วยความอบอุ่นใจและความสุขล้นหลามนะเหมียว! 🍃✨"
+        ];
+
+        function showBlessing() {
+            // Play magical chime chord
+            playTone(523.25, 'sine', 0.15, 0.1); // C5
+            setTimeout(() => playTone(659.25, 'sine', 0.15, 0.1), 60); // E5
+            setTimeout(() => playTone(783.99, 'sine', 0.15, 0.1), 120); // G5
+            setTimeout(() => playTone(1046.50, 'sine', 0.3, 0.12), 180); // C6
+
+            // Set random blessing
+            const box = document.getElementById('blessingBox');
+            const text = document.getElementById('blessingText');
+            
+            const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+            text.innerText = `"${randomBlessing}"`;
+
+            // Reveal box
+            box.classList.add('show');
+
+            // Trigger confetti explosion
+            createConfettiExplosion();
+        }
+
+        // Confetti Generator
+        function createConfettiExplosion() {
+            const colors = ['#f94144', '#f3722c', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#577590', '#a1c4fd', '#ffb7b2'];
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random size
+                const size = Math.random() * 8 + 6;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                // Random animation properties
+                confetti.style.animationDuration = Math.random() * 2 + 1.5 + 's';
+                confetti.style.animationDelay = Math.random() * 0.2 + 's';
+                
+                // Random horizontal drift
+                const drift = (Math.random() - 0.5) * 200;
+                confetti.style.setProperty('--drift', drift + 'px');
+                
+                document.body.appendChild(confetti);
+
+                // Remove from DOM after animation completes
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3500);
+            }
+        }
+
+        // Create ambient floating bubbles
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            const bubbleCount = 8;
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                const size = Math.random() * 60 + 20;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                
+                bubble.style.left = Math.random() * 100 + 'vw';
+                bubble.style.bottom = '-' + size + 'px';
+                bubble.style.animationDuration = Math.random() * 10 + 15 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(bubble);
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            setThaiDate();
+            createBubbles();
+        };
+    </script>
+</body>
+</html>
