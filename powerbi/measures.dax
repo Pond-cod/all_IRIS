@@ -1,0 +1,51 @@
+// ============================================================================
+//  Loan Analytics — DAX measures  (ตามสไลด์ Day 3)
+//  วางลงใน Power BI: เลือกตาราง fact_loan -> New measure -> วางทีละก้อน
+//  อ้างชื่อตารางแบบไม่มี prefix (Power BI rename <TEAM_ID>_fact_loan -> fact_loan ได้)
+// ============================================================================
+
+// ---------- หน้า Analytics ----------
+
+Total Loans = COUNTROWS ( fact_loan )
+
+Total Funded = SUM ( fact_loan[funded_amnt] )
+
+Total Profit = SUM ( fact_loan[profit] )
+
+// เงินที่ปล่อยกู้ให้สินเชื่อที่เบี้ยวหนี้ = ยอดเสียหายจริง (charge-off)
+Charge-off $ = CALCULATE ( SUM ( fact_loan[funded_amnt] ), fact_loan[is_default] = 1 )
+
+// is_default = 1 (เบี้ยวหนี้) / 0 (ปกติ)  ->  สัดส่วน x 100 ให้เป็นเปอร์เซ็นต์
+// ⚠️ ต้องมี * 100  — ถ้าลืม จะได้ 0.26 แทน 26 (หรือไปตั้ง format measure เป็น Percentage)
+Default Rate % =
+DIVIDE ( SUM ( fact_loan[is_default] ), COUNTROWS ( fact_loan ) ) * 100
+
+Avg Int Rate = AVERAGE ( fact_loan[int_rate] )
+
+// ROI = กำไรรวม / เงินที่ปล่อยกู้รวม  (อ้าง measure อื่น — สะอาดกว่า)
+// ⚠️ อย่าลืม * 100  — ถ้าลืม จะได้ -0.20 แทน -20
+ROI % = DIVIDE ( [Total Profit], [Total Funded], 0 ) * 100
+
+// (เสริม) ยอดกู้เฉลี่ยต่อสัญญา
+Avg Loan Amount = AVERAGE ( fact_loan[loan_amnt] )
+
+
+// ---------- หน้า Data Quality ----------
+// fact_loan = แถวที่ "ผ่าน" validate · <TEAM_ID>_quarantine_loan = แถวที่ถูกคัด
+// ** ต้องโหลดตาราง quarantine เข้า model ด้วย (rename เป็น quarantine_loan) **
+
+Good Rows = COUNTROWS ( fact_loan )
+
+Quarantine Rows = COUNTROWS ( quarantine_loan )
+
+Total Rows = [Good Rows] + [Quarantine Rows]
+
+// % แถวที่ผ่านกฎ business
+Validity % = DIVIDE ( [Good Rows], [Total Rows] ) * 100
+
+// % ความครบของช่องสำคัญใน fact (ตัวอย่าง: fico_avg ไม่ว่าง)
+//   ปรับ column ได้ตามต้องการ
+Completeness % =
+VAR _total = COUNTROWS ( fact_loan )
+VAR _filled = COUNTROWS ( FILTER ( fact_loan, NOT ISBLANK ( fact_loan[fico_avg] ) ) )
+RETURN DIVIDE ( _filled, _total ) * 100
